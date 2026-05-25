@@ -1,25 +1,26 @@
 // src/pages/Dashboard.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
-import { ClipboardList, CheckCircle2, XCircle } from "lucide-react";
+// Tambahkan ChevronLeft dan ChevronRight untuk icon tombol Next/Prev
+import { ClipboardList, CheckCircle2, XCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import StatCard from "../components/StatCard";
 import GymCard from "../components/GymCard";
 import ActionModal from "../components/ActionModal";
 import { cn } from "../utils/cn";
 
+// DATA DUMMY (Sudah dirapikan ID-nya)
 const INITIAL_DUMMY_DATA = [
     { id: 1, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
     { id: 2, name: "Apex Strength", location: "Bali", email: "hello@apexstrength.com", phone: "+62 811-9876-5432", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1470&auto=format&fit=crop" },
     { id: 3, name: "Goliath Gym", location: "Surabaya", email: "info@goliathgym.co.id", phone: "+62 813-1122-3344", status: "APPROVED", imageUrl: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1470&auto=format&fit=crop" },
     { id: 4, name: "Iron Sanctuary", location: "Bandung", email: "admin@ironsanctuary.com", phone: "+62 819-9988-7766", status: "REJECTED", imageUrl: "https://images.unsplash.com/photo-1570829460005-c840387bb1ea?q=80&w=1470&auto=format&fit=crop" },
-    { id: 5, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
-    { id: 6, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
-    { id: 7, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
-    { id: 8, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
-    { id: 9, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
-    { id: 1, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
-
+    { id: 5, name: "Zeus Barbell", location: "Medan", email: "contact@zeusbarbell.com", phone: "+62 812-1111-2222", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
+    { id: 6, name: "Valkyrie Fit", location: "Yogyakarta", email: "hello@valkyriefit.id", phone: "+62 813-3333-4444", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1470&auto=format&fit=crop" },
+    { id: 7, name: "Spartan Arena", location: "Semarang", email: "info@spartanarena.co.id", phone: "+62 819-5555-6666", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1470&auto=format&fit=crop" },
+    { id: 8, name: "Odin's Hall", location: "Makassar", email: "admin@odinshall.com", phone: "+62 821-7777-8888", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1570829460005-c840387bb1ea?q=80&w=1470&auto=format&fit=crop" },
+    { id: 9, name: "Hades Iron", location: "Malang", email: "contact@hadesiron.id", phone: "+62 822-9999-0000", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
+    { id: 10, name: "Apollo Fitness", location: "Jakarta", email: "hello@apollofitness.com", phone: "+62 811-1234-5678", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1470&auto=format&fit=crop" },
 ];
 
 const FilterPill = ({ label, active, dotColor, onClick }) => (
@@ -41,22 +42,31 @@ const Dashboard = () => {
     const [filter, setFilter] = useState("All");
     const [modalConfig, setModalConfig] = useState({ isOpen: false, type: null, gymName: "" });
 
+    // --- STATE UNTUK PAGINATION ---
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5; // Menentukan berapa data yang muncul per halaman (misal 4)
+
+    // Efek cerdas: Jika user sedang di halaman 3, lalu dia melakukan pencarian/filter,
+    // kembalikan dia ke halaman 1 agar tidak melihat layar kosong.
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filter, searchTerm]);
+
+    // --- LOGIKA AKSI MODAL ---
     const handleApprove = (id, name) => {
         setModalConfig({ isOpen: true, type: "approve", gymName: name });
         setGyms((prev) => prev.map(gym => gym.id === id ? { ...gym, status: "APPROVED" } : gym));
     };
-
     const handleReject = (id, name) => {
         setModalConfig({ isOpen: true, type: "reject", gymName: name });
         setGyms((prev) => prev.map(gym => gym.id === id ? { ...gym, status: "REJECTED" } : gym));
     };
-
     const handleEdit = (id) => {
         setGyms((prev) => prev.map(gym => gym.id === id ? { ...gym, status: "PENDING" } : gym));
     };
-
     const closeModal = () => setModalConfig({ ...modalConfig, isOpen: false });
 
+    // --- LOGIKA FILTERING ---
     const filteredGyms = gyms.filter((gym) => {
         const matchStatus = filter === "All" || gym.status.toUpperCase() === filter.toUpperCase();
         const searchLower = searchTerm.toLowerCase();
@@ -64,42 +74,29 @@ const Dashboard = () => {
         return matchStatus && matchSearch;
     });
 
-    // --- PERHITUNGAN MATEMATIKA UNTUK PROGRESS BAR ---
-    const totalGyms = gyms.length; // Total semua data
+    // --- LOGIKA MATEMATIKA PAGINATION ---
+    const totalPages = Math.ceil(filteredGyms.length / itemsPerPage);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+    // Memotong array hasil filter untuk hanya mengambil 4 data di halaman saat ini
+    const currentGyms = filteredGyms.slice(indexOfFirstItem, indexOfLastItem);
+
+    // --- STATISTIK ---
+    const totalGyms = gyms.length;
     const pendingCount = gyms.filter(g => g.status === "PENDING").length;
     const approvedCount = gyms.filter(g => g.status === "APPROVED").length;
     const rejectedCount = gyms.filter(g => g.status === "REJECTED").length;
-
-    // Helper function untuk mencari persentase (mencegah NaN jika array kosong)
     const getPercentage = (count) => totalGyms === 0 ? 0 : (count / totalGyms) * 100;
 
     return (
         <div className="w-full flex flex-col gap-10 pb-10">
 
-            {/* SECTION STATISTIK DINAMIS & PROGRESS BAR */}
+            {/* SECTION STATISTIK */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard
-                    title="Total Pending Gym" // Teks disesuaikan
-                    value={pendingCount}
-                    icon={ClipboardList}
-                    delay={0.1}
-                    percentage={getPercentage(pendingCount)}
-                />
-                <StatCard
-                    title="Approved" // Teks disesuaikan (Tanpa "Today")
-                    value={approvedCount}
-                    icon={CheckCircle2}
-                    delay={0.2}
-                    percentage={getPercentage(approvedCount)}
-                />
-                <StatCard
-                    title="Rejected" // Teks disesuaikan (Tanpa "Today")
-                    value={rejectedCount}
-                    icon={XCircle}
-                    delay={0.3}
-                    percentage={getPercentage(rejectedCount)}
-                    lineColor="bg-red-500" // Warna khusus merah sesuai desain
-                />
+                <StatCard title="Total Pending Gym" value={pendingCount} icon={ClipboardList} delay={0.1} percentage={getPercentage(pendingCount)} />
+                <StatCard title="Approved" value={approvedCount} icon={CheckCircle2} delay={0.2} percentage={getPercentage(approvedCount)} />
+                <StatCard title="Rejected" value={rejectedCount} icon={XCircle} delay={0.3} percentage={getPercentage(rejectedCount)} lineColor="bg-red-500" />
             </div>
 
             {/* SECTION LIST & FILTER */}
@@ -124,8 +121,9 @@ const Dashboard = () => {
 
                 <div className="flex flex-col gap-4">
                     <AnimatePresence mode="popLayout">
-                        {filteredGyms.length > 0 ? (
-                            filteredGyms.map((gym, index) => (
+                        {currentGyms.length > 0 ? (
+                            // PERHATIKAN: Sekarang kita menggunakan currentGyms, bukan filteredGyms
+                            currentGyms.map((gym, index) => (
                                 <motion.div
                                     key={gym.id}
                                     layout
@@ -154,6 +152,43 @@ const Dashboard = () => {
                             </motion.div>
                         )}
                     </AnimatePresence>
+
+                    {/* --- KOMPONEN PAGINATION BAWAH --- */}
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-between mt-4 pt-6 border-t border-gray-200 dark:border-white/10">
+              <span className="text-[13px] text-gray-500 dark:text-gray-400 font-medium">
+                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredGyms.length)} of {filteredGyms.length} entries
+              </span>
+
+                            <div className="flex items-center gap-2">
+                                {/* Tombol Previous */}
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[13px] font-medium border border-gray-200 dark:border-white/10 bg-white dark:bg-[#111] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <ChevronLeft className="w-4 h-4" />
+                                    Prev
+                                </button>
+
+                                {/* Indikator Halaman */}
+                                <span className="text-[13px] font-medium text-gray-700 dark:text-gray-300 px-2">
+                  Page {currentPage} of {totalPages}
+                </span>
+
+                                {/* Tombol Next */}
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-[13px] font-medium border border-gray-200 dark:border-white/10 bg-white dark:bg-[#111] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Next
+                                    <ChevronRight className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                 </div>
             </div>
 
