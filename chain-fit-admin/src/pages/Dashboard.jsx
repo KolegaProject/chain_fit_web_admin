@@ -8,7 +8,6 @@ import GymCard from "../components/GymCard";
 import ActionModal from "../components/ActionModal";
 import { cn } from "../utils/cn";
 
-// Data Awal
 const INITIAL_DUMMY_DATA = [
     { id: 1, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
     { id: 2, name: "Apex Strength", location: "Bali", email: "hello@apexstrength.com", phone: "+62 811-9876-5432", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1470&auto=format&fit=crop" },
@@ -31,36 +30,26 @@ const FilterPill = ({ label, active, dotColor, onClick }) => (
 
 const Dashboard = () => {
     const { searchTerm } = useOutletContext();
-
-    // 1. UBAH DATA DUMMY MENJADI STATE AGAR BISA DIUBAH SECARA REAL-TIME
     const [gyms, setGyms] = useState(INITIAL_DUMMY_DATA);
-
     const [filter, setFilter] = useState("All");
     const [modalConfig, setModalConfig] = useState({ isOpen: false, type: null, gymName: "" });
 
-    // 2. FUNGSI UNTUK MENGUBAH STATUS (UPDATE STATE)
     const handleApprove = (id, name) => {
-        // Munculkan Modal
         setModalConfig({ isOpen: true, type: "approve", gymName: name });
-        // Ubah status gym di dalam state menjadi APPROVED
         setGyms((prev) => prev.map(gym => gym.id === id ? { ...gym, status: "APPROVED" } : gym));
     };
 
     const handleReject = (id, name) => {
-        // Munculkan Modal
         setModalConfig({ isOpen: true, type: "reject", gymName: name });
-        // Ubah status gym di dalam state menjadi REJECTED
         setGyms((prev) => prev.map(gym => gym.id === id ? { ...gym, status: "REJECTED" } : gym));
     };
 
     const handleEdit = (id) => {
-        // Kembalikan status gym menjadi PENDING
         setGyms((prev) => prev.map(gym => gym.id === id ? { ...gym, status: "PENDING" } : gym));
     };
 
     const closeModal = () => setModalConfig({ ...modalConfig, isOpen: false });
 
-    // 3. LOGIKA FILTERING (Sekarang mengambil dari state 'gyms' bukan data statis)
     const filteredGyms = gyms.filter((gym) => {
         const matchStatus = filter === "All" || gym.status.toUpperCase() === filter.toUpperCase();
         const searchLower = searchTerm.toLowerCase();
@@ -68,19 +57,42 @@ const Dashboard = () => {
         return matchStatus && matchSearch;
     });
 
-    // Hitung jumlah statistik secara dinamis berdasarkan State
+    // --- PERHITUNGAN MATEMATIKA UNTUK PROGRESS BAR ---
+    const totalGyms = gyms.length; // Total semua data
     const pendingCount = gyms.filter(g => g.status === "PENDING").length;
     const approvedCount = gyms.filter(g => g.status === "APPROVED").length;
     const rejectedCount = gyms.filter(g => g.status === "REJECTED").length;
 
+    // Helper function untuk mencari persentase (mencegah NaN jika array kosong)
+    const getPercentage = (count) => totalGyms === 0 ? 0 : (count / totalGyms) * 100;
+
     return (
         <div className="w-full flex flex-col gap-10 pb-10">
 
-            {/* SECTION STATISTIK DINAMIS */}
+            {/* SECTION STATISTIK DINAMIS & PROGRESS BAR */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard title="Total Pending Gym" value={pendingCount} icon={ClipboardList} delay={0.1} />
-                <StatCard title="Approved Today" value={approvedCount} icon={CheckCircle2} delay={0.2} />
-                <StatCard title="Rejected Today" value={rejectedCount} icon={XCircle} delay={0.3} />
+                <StatCard
+                    title="Total Pending Gym" // Teks disesuaikan
+                    value={pendingCount}
+                    icon={ClipboardList}
+                    delay={0.1}
+                    percentage={getPercentage(pendingCount)}
+                />
+                <StatCard
+                    title="Approved" // Teks disesuaikan (Tanpa "Today")
+                    value={approvedCount}
+                    icon={CheckCircle2}
+                    delay={0.2}
+                    percentage={getPercentage(approvedCount)}
+                />
+                <StatCard
+                    title="Rejected" // Teks disesuaikan (Tanpa "Today")
+                    value={rejectedCount}
+                    icon={XCircle}
+                    delay={0.3}
+                    percentage={getPercentage(rejectedCount)}
+                    lineColor="bg-red-500" // Warna khusus merah sesuai desain
+                />
             </div>
 
             {/* SECTION LIST & FILTER */}
@@ -109,7 +121,7 @@ const Dashboard = () => {
                             filteredGyms.map((gym, index) => (
                                 <motion.div
                                     key={gym.id}
-                                    layout // Ini membuat animasi pergeseran saat status berubah
+                                    layout
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
