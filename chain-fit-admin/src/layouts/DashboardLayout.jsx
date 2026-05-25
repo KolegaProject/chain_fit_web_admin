@@ -1,20 +1,22 @@
 // src/layouts/DashboardLayout.jsx
 import { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
-// Tambahkan fungsi untuk menangani form pencarian jika diperlukan
-import { Search, Sun, Moon, UserCircle } from "lucide-react";
+// Tambahkan useNavigate
+import { Outlet, useNavigate } from "react-router-dom";
+// Tambahkan icon LogOut
+import { Search, Sun, Moon, UserCircle, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const DashboardLayout = () => {
+    const navigate = useNavigate(); // Inisialisasi navigasi
+    const [searchTerm, setSearchTerm] = useState("");
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State untuk Dropdown
+
     const [isDark, setIsDark] = useState(() => {
         if (typeof window !== 'undefined') {
             return localStorage.getItem('theme') !== 'light';
         }
         return true;
     });
-
-    // 1. BUAT STATE UNTUK PENCARIAN
-    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         if (isDark) {
@@ -25,6 +27,12 @@ const DashboardLayout = () => {
             localStorage.setItem('theme', 'light');
         }
     }, [isDark]);
+
+    // FUNGSI LOGOUT
+    const handleLogout = () => {
+        localStorage.removeItem("isAuthenticated"); // Hapus token/status login
+        navigate("/login"); // Arahkan ke halaman login
+    };
 
     return (
         <div className="min-h-screen flex flex-col bg-[#fafafa] dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 font-sans transition-colors duration-500">
@@ -37,7 +45,6 @@ const DashboardLayout = () => {
                     </h1>
                 </div>
 
-                {/* 2. HUBUNGKAN STATE KE INPUT SEARCH */}
                 <div className="flex-1 max-w-xl mx-8 hidden md:block relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <Search className="h-4 w-4 text-gray-400 dark:text-gray-500" />
@@ -51,13 +58,13 @@ const DashboardLayout = () => {
                     />
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 relative">
+
                     <button
                         onClick={() => setIsDark(!isDark)}
                         className="p-2.5 rounded-full border border-gray-200 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-[#111] transition-colors text-gray-600 dark:text-gray-400"
                     >
                         <AnimatePresence mode="wait">
-                            {/* ... (kode icon Sun/Moon sama seperti sebelumnya) ... */}
                             {isDark ? (
                                 <motion.div key="sun" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
                                     <Sun className="w-[18px] h-[18px]" />
@@ -70,17 +77,54 @@ const DashboardLayout = () => {
                         </AnimatePresence>
                     </button>
 
-                    <div className="flex items-center gap-3 pl-4 border-l border-gray-200 dark:border-white/10 cursor-pointer group">
-                        <span className="text-[14px] font-medium text-gray-700 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors">Admin</span>
-                        <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-                            <UserCircle className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                    {/* AREA PROFIL & DROPDOWN */}
+                    <div className="relative border-l border-gray-200 dark:border-white/10 pl-4">
+                        {/* Tombol Profil */}
+                        <div
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            className="flex items-center gap-3 cursor-pointer group"
+                        >
+                            <span className="text-[14px] font-medium text-gray-700 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors">Admin</span>
+                            <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center group-hover:ring-2 ring-gray-300 dark:ring-gray-600 transition-all">
+                                <UserCircle className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                            </div>
                         </div>
+
+                        {/* Menu Dropdown Logout Animasi */}
+                        <AnimatePresence>
+                            {isDropdownOpen && (
+                                <>
+                                    {/* Invisible Overlay untuk menutup dropdown jika klik di luar area */}
+                                    <div
+                                        className="fixed inset-0 z-40"
+                                        onClick={() => setIsDropdownOpen(false)}
+                                    />
+
+                                    {/* Kotak Dropdown */}
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        transition={{ duration: 0.15 }}
+                                        className="absolute right-0 mt-3 w-48 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-xl shadow-xl z-50 overflow-hidden"
+                                    >
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors text-left"
+                                        >
+                                            <LogOut className="w-4 h-4" />
+                                            Sign Out
+                                        </button>
+                                    </motion.div>
+                                </>
+                            )}
+                        </AnimatePresence>
                     </div>
+
                 </div>
             </header>
 
             <main className="flex-1 w-full max-w-7xl mx-auto p-8 overflow-x-hidden">
-                {/* 3. KIRIM STATE SEARCHTERM KE HALAMAN BAWAH MELALUI CONTEXT */}
                 <Outlet context={{ searchTerm }} />
             </main>
         </div>

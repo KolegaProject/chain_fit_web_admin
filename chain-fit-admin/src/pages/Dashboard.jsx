@@ -12,7 +12,14 @@ const INITIAL_DUMMY_DATA = [
     { id: 1, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
     { id: 2, name: "Apex Strength", location: "Bali", email: "hello@apexstrength.com", phone: "+62 811-9876-5432", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=1470&auto=format&fit=crop" },
     { id: 3, name: "Goliath Gym", location: "Surabaya", email: "info@goliathgym.co.id", phone: "+62 813-1122-3344", status: "APPROVED", imageUrl: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1470&auto=format&fit=crop" },
-    { id: 4, name: "Iron Sanctuary", location: "Bandung", email: "admin@ironsanctuary.com", phone: "+62 819-9988-7766", status: "REJECTED", imageUrl: "https://images.unsplash.com/photo-1570829460005-c840387bb1ea?q=80&w=1470&auto=format&fit=crop" }
+    { id: 4, name: "Iron Sanctuary", location: "Bandung", email: "admin@ironsanctuary.com", phone: "+62 819-9988-7766", status: "REJECTED", imageUrl: "https://images.unsplash.com/photo-1570829460005-c840387bb1ea?q=80&w=1470&auto=format&fit=crop" },
+    { id: 5, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
+    { id: 6, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
+    { id: 7, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
+    { id: 8, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
+    { id: 9, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
+    { id: 1, name: "Titan Fitness", location: "Jakarta", email: "contact@titanfitness.id", phone: "+62 812-3456-7890", status: "PENDING", imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop" },
+
 ];
 
 const FilterPill = ({ label, active, dotColor, onClick }) => (

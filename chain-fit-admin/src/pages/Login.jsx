@@ -29,11 +29,15 @@ const Login = () => {
         }
     }, [isDark]);
 
+    // Di dalam src/pages/Login.jsx
     const handleLogin = (e) => {
         e.preventDefault();
         setIsLoading(true);
+
         setTimeout(() => {
             setIsLoading(false);
+            // SIMPAN STATUS LOGIN KE LOCAL STORAGE
+            localStorage.setItem("isAuthenticated", "true");
             navigate("/admin/dashboard");
         }, 1000);
     };
