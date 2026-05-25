@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Lock, CheckCircle2, Sun, Moon } from "lucide-react";
 import { cn } from "../utils/cn";
 import ColorBends from "../components/ColorBends";
+import Logo from "../components/Logo"; // 1. IMPORT KOMPONEN LOGO BARU
 
 const StatusBar = () => (
     <motion.div
@@ -40,7 +41,6 @@ const Welcome = () => {
         }
     }, [isDark]);
 
-    // Warna persis seperti gambar referensi dari React Bits
     const originalColors = ["#ff5c7a", "#8a5cff", "#00ffd1"];
 
     return (
@@ -49,7 +49,6 @@ const Welcome = () => {
             {/* 1. ANIMASI (Paling Belakang) */}
             <div className="absolute inset-0 z-0">
                 <ColorBends
-                    // Props di bawah ini disamakan PERSIS dengan gambar referensi
                     colors={originalColors}
                     rotation={90}
                     speed={0.2}
@@ -62,13 +61,12 @@ const Welcome = () => {
                     iterations={1}
                     intensity={1.5}
                     bandWidth={6}
-                    transparent={true} // Wajib true agar menyatu dengan background Tailwind
+                    transparent={true}
                     autoRotate={0}
                 />
             </div>
 
             {/* 2. OVERLAY (Penyesuaian Light/Dark) */}
-            {/* Di Dark Mode, overlay-nya transparan (animasi jelas). Di Light Mode, overlay putih tipis agar tidak overexposed. */}
             <div className={cn(
                 "absolute inset-0 transition-colors duration-500 z-10 pointer-events-none",
                 isDark ? "bg-transparent" : "bg-white/80 backdrop-blur-[1px]"
@@ -100,13 +98,11 @@ const Welcome = () => {
                 className="flex flex-col items-center text-center max-w-3xl px-6 relative z-20"
             >
                 <div className="mb-6 flex flex-col items-center gap-4">
-                    <div className="w-16 h-16 flex items-center justify-center bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-3xl shadow-sm dark:shadow-[0_0_15px_rgba(255,255,255,0.05)]">
-                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" className="text-gray-800 dark:text-gray-200">
-                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                    </div>
+
+                    {/* --- GANTI KOTAK SVG LAMA DENGAN KOMPONEN LOGO BARU --- */}
+                    {/* Kita berikan ukuran w-40 (160px) agar logonya terlihat megah */}
+                    <Logo className="w-40 h-auto mb-2 drop-shadow-md" />
+
                     <div className="flex items-center gap-2.5 text-[12px] tracking-[0.25em] text-gray-500 uppercase font-medium">
                         <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                         AUTHORIZED ACCESS ONLY

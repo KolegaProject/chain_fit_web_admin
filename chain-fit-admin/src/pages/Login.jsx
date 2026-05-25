@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, ArrowRight, Sun, Moon } from "lucide-react";
 import BorderGlow from "../components/BorderGlow";
+import Logo from "../components/Logo"; // Import komponen Logo pintar
 import { cn } from "../utils/cn";
 
 const Login = () => {
@@ -29,14 +30,13 @@ const Login = () => {
         }
     }, [isDark]);
 
-    // Di dalam src/pages/Login.jsx
     const handleLogin = (e) => {
         e.preventDefault();
         setIsLoading(true);
 
+        // Simulasi loading 1 detik, lalu set auth dan pindah ke dashboard
         setTimeout(() => {
             setIsLoading(false);
-            // SIMPAN STATUS LOGIN KE LOCAL STORAGE
             localStorage.setItem("isAuthenticated", "true");
             navigate("/admin/dashboard");
         }, 1000);
@@ -68,25 +68,30 @@ const Login = () => {
             <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-black/[0.03] dark:bg-white/[0.02] rounded-full blur-[100px] pointer-events-none transition-colors duration-500" />
             <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-black/[0.02] dark:bg-white/[0.015] rounded-full blur-[120px] pointer-events-none transition-colors duration-500" />
 
-            {/* Kontainer Form Login - DIPERBESAR */}
+            {/* Kontainer Form Login */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                // max-w-[420px] diubah menjadi max-w-[480px] agar lebih besar dan luas
                 className="w-full max-w-[480px] px-6 relative z-10"
             >
-                <BorderGlow className="w-full shadow-2xl dark:shadow-none">
-                    {/* px-8 py-10 diubah menjadi px-10 py-12 untuk padding yang lebih lega */}
+                <BorderGlow
+                    className="w-full shadow-2xl dark:shadow-none transition-colors duration-500"
+                    // Props dinamis menyesuaikan tema
+                    backgroundColor={isDark ? '#0a0a0a' : '#ffffff'}
+                    colors={isDark
+                        ? ['#c084fc', '#f472b6', '#38bdf8']
+                        : ['#2563eb', '#7c3aed', '#0ea5e9']
+                    }
+                    glowColor={isDark ? '40 80 80' : '220 90 40'}
+                    glowIntensity={isDark ? 1.0 : 1.5}
+                    animated={true}
+                >
                     <div className="px-10 py-12 flex flex-col items-center">
 
-                        {/* Logo */}
-                        <div className="mb-5 flex items-center justify-center">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="text-gray-800 dark:text-gray-200 transition-colors duration-500">
-                                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
+                        {/* IMPLEMENTASI LOGO PINTAR DI SINI */}
+                        <div className="mb-6">
+                            <Logo className="w-28 h-auto" />
                         </div>
 
                         {/* Title & Subtitle */}
@@ -105,7 +110,6 @@ const Login = () => {
                                     type="email"
                                     placeholder="admin@chainfit.com"
                                     required
-                                    // Kelas input disesuaikan agar rapi di Light & Dark Mode
                                     className="w-full bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-gray-800 text-gray-900 dark:text-gray-200 text-[15px] rounded-xl focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-600 focus:border-gray-400 dark:focus:border-gray-600 block pl-11 py-3.5 transition-all outline-none placeholder:text-gray-400 dark:placeholder:text-gray-600 shadow-sm dark:shadow-none"
                                 />
                             </div>
@@ -128,15 +132,16 @@ const Login = () => {
                                 <label className="flex items-center gap-2.5 cursor-pointer group">
                                     <input
                                         type="checkbox"
-                                        // SVG Checkbox hitam untuk Light Mode, Putih untuk Dark Mode
-                                        className="w-4 h-4 rounded border-gray-300 dark:border-gray-700 bg-white dark:bg-[#111] checked:bg-black checked:border-black dark:checked:bg-white dark:checked:border-white focus:ring-0 focus:ring-offset-0 cursor-pointer appearance-none
+                                        className="w-4 h-4 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#111] checked:bg-black checked:border-black dark:checked:bg-white dark:checked:border-white focus:ring-0 focus:ring-offset-0 cursor-pointer appearance-none
                     checked:bg-[url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTQgMTQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTExLjY2NjYgMy41TDUuMjQ5OTIgOS45MTY2N0wyLjMzMzI1IDcuMCIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=')]
                     dark:checked:bg-[url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTQgMTQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTExLjY2NjYgMy41TDUuMjQ5OTIgOS45MTY2N0wyLjMzMzI1IDcuMCIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=')]
                     bg-center bg-no-repeat transition-all"
                                     />
-                                    <span className="text-[13px] text-gray-500 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-200 transition-colors">Remember me</span>
+                                    <span className="text-[13px] text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-200 transition-colors">
+                    Remember me
+                  </span>
                                 </label>
-                                <a href="#" className="text-[13px] text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                <a href="#" className="text-[13px] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
                                     Forgot password?
                                 </a>
                             </div>
@@ -147,8 +152,8 @@ const Login = () => {
                                 disabled={isLoading}
                                 className={cn(
                                     "w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-[15px] font-semibold transition-all duration-300 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed",
-                                    "bg-black text-white hover:bg-gray-800 shadow-md", // Light Mode Button
-                                    "dark:bg-white dark:text-black dark:hover:bg-gray-200" // Dark Mode Button
+                                    "bg-black text-white hover:bg-gray-800 shadow-md",
+                                    "dark:bg-white dark:text-black dark:hover:bg-gray-200"
                                 )}
                             >
                                 {isLoading ? (
