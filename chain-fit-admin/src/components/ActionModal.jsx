@@ -1,18 +1,14 @@
-// src/components/ActionModal.jsx
 import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 
 export default function ActionModal({ isOpen, type, gymName, onClose }) {
-    // Jika state isOpen false, jangan render apapun
     if (!isOpen) return null;
 
     const isApprove = type === "approve";
 
     return (
-        // Wadah utama layar penuh dengan efek blur
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-[4px]">
 
-            {/* Latar belakang transparan yang bisa diklik untuk menutup modal */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -21,7 +17,6 @@ export default function ActionModal({ isOpen, type, gymName, onClose }) {
                 onClick={onClose}
             />
 
-            {/* Kontainer Kotak Modal Utama */}
             <motion.div
                 initial={{ scale: 0.9, opacity: 0, y: 10 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -29,7 +24,6 @@ export default function ActionModal({ isOpen, type, gymName, onClose }) {
                 transition={{ type: "spring", damping: 25, stiffness: 300 }}
                 className="relative w-full max-w-[360px] bg-[#111111] border border-[#222] rounded-2xl p-8 flex flex-col items-center text-center shadow-2xl z-10"
             >
-                {/* Lingkaran Icon dengan Efek Glow (Menyesuaikan dengan tipe) */}
                 <div
                     className={`w-[52px] h-[52px] rounded-full flex items-center justify-center mb-5 border 
           ${isApprove
@@ -44,12 +38,10 @@ export default function ActionModal({ isOpen, type, gymName, onClose }) {
                     )}
                 </div>
 
-                {/* Judul Modal */}
                 <h2 className="text-2xl font-bold text-white mb-3 tracking-tight">
                     {isApprove ? "Success!" : "Application Rejected"}
                 </h2>
 
-                {/* Pesan Dinamis */}
                 <p className="text-[14px] text-gray-400 leading-relaxed mb-8">
                     {isApprove ? (
                         <>
@@ -62,7 +54,6 @@ export default function ActionModal({ isOpen, type, gymName, onClose }) {
                     )}
                 </p>
 
-                {/* Tombol Aksi */}
                 <button
                     onClick={onClose}
                     className="w-full bg-white text-black font-semibold py-3.5 rounded-xl text-[14px] hover:bg-gray-200 transition-all active:scale-[0.98]"

@@ -1,11 +1,10 @@
-// src/pages/Welcome.jsx
-import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Lock, CheckCircle2, Sun, Moon } from "lucide-react";
 import { cn } from "../utils/cn";
+import { useTheme } from "../hooks/useTheme";
 import ColorBends from "../components/ColorBends";
-import Logo from "../components/Logo"; // 1. IMPORT KOMPONEN LOGO BARU
+import Logo from "../components/Logo";
 
 const StatusBar = () => (
     <motion.div
@@ -31,22 +30,12 @@ const StatusBar = () => (
 );
 
 const Welcome = () => {
-    const [isDark, setIsDark] = useState(true);
-
-    useEffect(() => {
-        if (isDark) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    }, [isDark]);
-
+    const { isDark, setIsDark } = useTheme();
     const originalColors = ["#ff5c7a", "#8a5cff", "#00ffd1"];
 
     return (
         <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-6 text-gray-900 dark:text-white overflow-hidden bg-gray-50 dark:bg-[#050505] font-sans antialiased transition-colors duration-500">
 
-            {/* 1. ANIMASI (Paling Belakang) */}
             <div className="absolute inset-0 z-0">
                 <ColorBends
                     colors={originalColors}
@@ -66,13 +55,11 @@ const Welcome = () => {
                 />
             </div>
 
-            {/* 2. OVERLAY (Penyesuaian Light/Dark) */}
             <div className={cn(
                 "absolute inset-0 transition-colors duration-500 z-10 pointer-events-none",
                 isDark ? "bg-transparent" : "bg-white/80 backdrop-blur-[1px]"
             )}></div>
 
-            {/* 3. TOMBOL TEMA */}
             <button
                 onClick={() => setIsDark(!isDark)}
                 className="absolute top-6 right-8 p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition-colors bg-white/50 dark:bg-black/50 backdrop-blur-md group z-30 shadow-sm"
@@ -90,7 +77,6 @@ const Welcome = () => {
                 </AnimatePresence>
             </button>
 
-            {/* 4. KONTEN */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -99,8 +85,6 @@ const Welcome = () => {
             >
                 <div className="mb-6 flex flex-col items-center gap-4">
 
-                    {/* --- GANTI KOTAK SVG LAMA DENGAN KOMPONEN LOGO BARU --- */}
-                    {/* Kita berikan ukuran w-40 (160px) agar logonya terlihat megah */}
                     <Logo className="w-40 h-auto mb-2 drop-shadow-md" />
 
                     <div className="flex items-center gap-2.5 text-[12px] tracking-[0.25em] text-gray-500 uppercase font-medium">

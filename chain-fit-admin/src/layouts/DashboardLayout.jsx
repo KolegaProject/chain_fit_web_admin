@@ -1,37 +1,18 @@
-// src/layouts/DashboardLayout.jsx
-import { useState, useEffect } from "react";
-// Tambahkan useNavigate
+import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-// Tambahkan icon LogOut
 import { Search, Sun, Moon, UserCircle, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "../hooks/useTheme";
 
 const DashboardLayout = () => {
-    const navigate = useNavigate(); // Inisialisasi navigasi
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State untuk Dropdown
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const { isDark, setIsDark } = useTheme();
 
-    const [isDark, setIsDark] = useState(() => {
-        if (typeof window !== 'undefined') {
-            return localStorage.getItem('theme') !== 'light';
-        }
-        return true;
-    });
-
-    useEffect(() => {
-        if (isDark) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
-    }, [isDark]);
-
-    // FUNGSI LOGOUT
     const handleLogout = () => {
-        localStorage.removeItem("isAuthenticated"); // Hapus token/status login
-        navigate("/login"); // Arahkan ke halaman login
+        localStorage.removeItem("isAuthenticated");
+        navigate("/login");
     };
 
     return (
@@ -77,9 +58,7 @@ const DashboardLayout = () => {
                         </AnimatePresence>
                     </button>
 
-                    {/* AREA PROFIL & DROPDOWN */}
                     <div className="relative border-l border-gray-200 dark:border-white/10 pl-4">
-                        {/* Tombol Profil */}
                         <div
                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                             className="flex items-center gap-3 cursor-pointer group"
@@ -90,17 +69,14 @@ const DashboardLayout = () => {
                             </div>
                         </div>
 
-                        {/* Menu Dropdown Logout Animasi */}
                         <AnimatePresence>
                             {isDropdownOpen && (
                                 <>
-                                    {/* Invisible Overlay untuk menutup dropdown jika klik di luar area */}
                                     <div
                                         className="fixed inset-0 z-40"
                                         onClick={() => setIsDropdownOpen(false)}
                                     />
 
-                                    {/* Kotak Dropdown */}
                                     <motion.div
                                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
