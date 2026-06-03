@@ -27,9 +27,6 @@ const Dashboard = () => {
                 const response = await gymService.getPendingGyms();
                 const gymArray = Array.isArray(response) ? response : (response?.data || []);
 
-                // Console log dimatikan agar bersih (bisa diaktifkan lagi kalau butuh debugging)
-                // console.log("🔥 INTIP DATA BACKEND (Data Pertama):", gymArray[0]);
-
                 const formattedData = gymArray.map(gym => ({
                     id: gym.id,
                     name: gym.name,
@@ -37,7 +34,6 @@ const Dashboard = () => {
                     email: gym.email || "No email provided",
                     phone: gym.phone || "No phone provided",
 
-                    // PERBAIKAN UTAMA: Menggunakan gym.verified sesuai dengan response backend
                     status: gym.verified || "PENDING",
 
                     imageUrl: gym.imageUrl || "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop"
@@ -55,7 +51,6 @@ const Dashboard = () => {
         fetchGyms();
     }, []);
 
-    // Reset pagination when filter or search changes
     useEffect(() => {
         setCurrentPage(1);
     }, [filter, searchTerm]);

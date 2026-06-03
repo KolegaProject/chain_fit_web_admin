@@ -1,4 +1,4 @@
-import { MapPin, Mail, Phone, Check, X } from "lucide-react";
+import { MapPin, Mail, Phone, Check } from "lucide-react";
 import { cn } from "../utils/cn";
 
 export default function GymCard({ gym, onApprove, onReject }) {
@@ -8,7 +8,6 @@ export default function GymCard({ gym, onApprove, onReject }) {
     return (
         <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-white/10 rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-gray-300 dark:hover:border-white/20 transition-colors group relative">
 
-            {/* Bagian Info Gym & Gambar */}
             <div className="flex items-center gap-5 w-full md:w-auto">
                 <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-800 shrink-0">
                     <img
@@ -70,7 +69,6 @@ export default function GymCard({ gym, onApprove, onReject }) {
                     </>
                 ) : (
                     <>
-                        {/* Tampilan Jika Sudah Approved / Rejected */}
                         <div className={cn(
                             "flex items-center gap-1.5 px-3 py-1 mb-1 rounded-full border text-[10px] font-bold tracking-widest uppercase",
                             isApproved
@@ -81,16 +79,7 @@ export default function GymCard({ gym, onApprove, onReject }) {
                             {gym.status}
                         </div>
 
-                        {/* Tombol Pintasan (Swap Status) */}
-                        {isApproved ? (
-                            <button
-                                onClick={() => onReject(gym.id, gym.name)}
-                                className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-[13px] font-medium border border-gray-200 dark:border-white/10 text-gray-600 hover:text-red-600 hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-500/10 dark:hover:text-red-400 transition-all"
-                            >
-                                <X className="w-3.5 h-3.5" />
-                                Ubah ke Reject
-                            </button>
-                        ) : (
+                        {!isApproved && (
                             <button
                                 onClick={() => onApprove(gym.id, gym.name)}
                                 className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-[13px] font-medium border border-gray-200 dark:border-white/10 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400 transition-all"
