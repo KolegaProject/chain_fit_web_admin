@@ -1,7 +1,7 @@
-import { MapPin, Mail, Phone, RotateCcw } from "lucide-react";
+import { MapPin, Mail, Phone, Check, X } from "lucide-react";
 import { cn } from "../utils/cn";
 
-export default function GymCard({ gym, onApprove, onReject, onEdit }) {
+export default function GymCard({ gym, onApprove, onReject }) {
     const isPending = gym.status === "PENDING";
     const isApproved = gym.status === "APPROVED";
 
@@ -28,7 +28,7 @@ export default function GymCard({ gym, onApprove, onReject, onEdit }) {
                 </div>
             </div>
 
-            {/* Bagian Kontak (Email & Phone) */}
+            {/* Bagian Kontak */}
             <div className="hidden md:flex flex-col gap-1.5 border-l border-gray-100 dark:border-white/5 pl-8 w-64">
                 <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                     <Mail className="w-3.5 h-3.5" />
@@ -45,14 +45,15 @@ export default function GymCard({ gym, onApprove, onReject, onEdit }) {
 
                 {isPending ? (
                     <>
+                        {/* Tampilan Jika Masih Pending */}
                         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5">
-                            <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
                             <span className="text-[10px] font-bold tracking-widest text-gray-500 dark:text-gray-400 uppercase">
                                 PENDING
                             </span>
                         </div>
 
-                        <div className="flex items-center gap-2 w-full md:w-auto">
+                        <div className="flex items-center gap-2 w-full md:w-auto mt-1">
                             <button
                                 onClick={() => onReject(gym.id, gym.name)}
                                 className="flex-1 md:flex-none px-5 py-2 rounded-lg text-[13px] font-medium border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-500 hover:border-red-200 dark:hover:border-red-500/30 transition-all"
@@ -69,8 +70,9 @@ export default function GymCard({ gym, onApprove, onReject, onEdit }) {
                     </>
                 ) : (
                     <>
+                        {/* Tampilan Jika Sudah Approved / Rejected */}
                         <div className={cn(
-                            "flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] font-bold tracking-widest uppercase",
+                            "flex items-center gap-1.5 px-3 py-1 mb-1 rounded-full border text-[10px] font-bold tracking-widest uppercase",
                             isApproved
                                 ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                                 : "border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400"
@@ -79,14 +81,24 @@ export default function GymCard({ gym, onApprove, onReject, onEdit }) {
                             {gym.status}
                         </div>
 
-                        {/* Tombol Batalkan / Edit yang sudah diperbaiki */}
-                        <button
-                            onClick={() => onEdit(gym.id, gym.name)}
-                            className="flex items-center gap-2 px-5 py-2 rounded-lg text-[13px] font-medium border border-gray-200 dark:border-white/10 text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all"
-                        >
-                            <RotateCcw className="w-3.5 h-3.5" />
-                            Batalkan / Edit
-                        </button>
+                        {/* Tombol Pintasan (Swap Status) */}
+                        {isApproved ? (
+                            <button
+                                onClick={() => onReject(gym.id, gym.name)}
+                                className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-[13px] font-medium border border-gray-200 dark:border-white/10 text-gray-600 hover:text-red-600 hover:bg-red-50 hover:border-red-200 dark:hover:bg-red-500/10 dark:hover:text-red-400 transition-all"
+                            >
+                                <X className="w-3.5 h-3.5" />
+                                Ubah ke Reject
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => onApprove(gym.id, gym.name)}
+                                className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-[13px] font-medium border border-gray-200 dark:border-white/10 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400 transition-all"
+                            >
+                                <Check className="w-3.5 h-3.5" />
+                                Ubah ke Approve
+                            </button>
+                        )}
                     </>
                 )}
             </div>
