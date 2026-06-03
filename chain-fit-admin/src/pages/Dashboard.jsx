@@ -24,14 +24,22 @@ const Dashboard = () => {
         const fetchGyms = async () => {
             setIsLoading(true);
             try {
-                const data = await gymService.getPendingGyms();
-                const formattedData = data.map(gym => ({
+                const response = await gymService.getPendingGyms();
+                const gymArray = Array.isArray(response) ? response : (response?.data || []);
+
+                // Console log dimatikan agar bersih (bisa diaktifkan lagi kalau butuh debugging)
+                // console.log("🔥 INTIP DATA BACKEND (Data Pertama):", gymArray[0]);
+
+                const formattedData = gymArray.map(gym => ({
                     id: gym.id,
                     name: gym.name,
                     location: gym.address || "Lokasi tidak diketahui",
                     email: gym.email || "No email provided",
                     phone: gym.phone || "No phone provided",
-                    status: gym.status || "PENDING",
+
+                    // PERBAIKAN UTAMA: Menggunakan gym.verified sesuai dengan response backend
+                    status: gym.verified || "PENDING",
+
                     imageUrl: gym.imageUrl || "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop"
                 }));
 
@@ -74,20 +82,15 @@ const Dashboard = () => {
 
     const handleEdit = async (id, name) => {
         try {
-            // 1. Tembak API untuk mengembalikan status ke PENDING
-            // Asumsi backend menggunakan string "PENDING" untuk mereset status
             await gymService.verifyGymStatus(id, "PENDING");
-
-            // 2. Jika sukses, ubah tampilan UI agar kembali menjadi PENDING
             setGyms((prev) => prev.map(gym => gym.id === id ? { ...gym, status: "PENDING" } : gym));
-
-            // Opsional: Bisa tambahkan toast/notifikasi sukses di sini
             console.log(`Status gym ${name} berhasil di-reset ke Pending.`);
         } catch (error) {
             console.error("Gagal mengedit status:", error);
             alert("Gagal mengedit data. Silakan coba lagi.");
         }
     };
+
     const closeModal = () => setModalConfig({ ...modalConfig, isOpen: false });
 
     const filteredGyms = gyms.filter((gym) => {
@@ -124,8 +127,8 @@ const Dashboard = () => {
                             Application Results
                         </h2>
                         <span className="text-[14px] text-gray-500 dark:text-gray-400">
-              {searchTerm ? `Searching for "${searchTerm}" in ${filter} status` : `Showing results for "${filter}" status`}
-            </span>
+                            {searchTerm ? `Searching for "${searchTerm}" in ${filter} status` : `Showing results for "${filter}" status`}
+                        </span>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2.5">
@@ -181,9 +184,9 @@ const Dashboard = () => {
 
                     {!isLoading && totalPages > 1 && (
                         <div className="flex items-center justify-between mt-4 pt-6 border-t border-gray-200 dark:border-white/10">
-              <span className="text-[13px] text-gray-500 dark:text-gray-400 font-medium">
-                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredGyms.length)} of {filteredGyms.length} entries
-              </span>
+                            <span className="text-[13px] text-gray-500 dark:text-gray-400 font-medium">
+                                Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredGyms.length)} of {filteredGyms.length} entries
+                            </span>
 
                             <div className="flex items-center gap-2">
                                 <button
@@ -195,8 +198,8 @@ const Dashboard = () => {
                                     Prev
                                 </button>
                                 <span className="text-[13px] font-medium text-gray-700 dark:text-gray-300 px-2">
-                  Page {currentPage} of {totalPages}
-                </span>
+                                    Page {currentPage} of {totalPages}
+                                </span>
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                                     disabled={currentPage === totalPages}

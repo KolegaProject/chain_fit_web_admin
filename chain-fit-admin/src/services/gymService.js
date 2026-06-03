@@ -1,16 +1,18 @@
 import api from '../utils/api';
 
 export const gymService = {
+    // Mengambil semua data gym
     getPendingGyms: async () => {
         try {
-            const response = await api.get('/api/v1/gym/verified-gym');
-            return response.data.data;
+            const response = await api.get("/api/v1/gym/verified-gym/list");
+            return response.data;
         } catch (error) {
-            console.error("Error fetching pending gyms:", error);
+            console.error("Error fetching gyms:", error);
             throw error;
         }
     },
 
+    // PERBAIKAN FINAL: Menggunakan method POST seperti kodemu yang asli
     verifyGymStatus: async (gymId, statusAction) => {
         try {
             const response = await api.post(`/api/v1/gym/verified-gym/${gymId}/verify`, {
@@ -18,11 +20,12 @@ export const gymService = {
             });
             return response.data;
         } catch (error) {
-            console.error(`Error verifying gym ${gymId}:`, error);
+            console.error(`Error verifying gym ${gymId} with status ${statusAction}:`, error);
             throw error;
         }
     },
 
+    // Mengambil detail gym berdasarkan ID
     getGymById: async (gymId) => {
         try {
             const response = await api.get(`/api/v1/gym/verified-gym/${gymId}`);
@@ -32,5 +35,4 @@ export const gymService = {
             throw error;
         }
     }
-
 };
