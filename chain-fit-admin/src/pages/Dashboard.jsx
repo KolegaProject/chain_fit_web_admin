@@ -72,10 +72,22 @@ const Dashboard = () => {
         }
     }, []);
 
-    const handleEdit = (id) => {
-        setGyms((prev) => prev.map(gym => gym.id === id ? { ...gym, status: "PENDING" } : gym));
-    };
+    const handleEdit = async (id, name) => {
+        try {
+            // 1. Tembak API untuk mengembalikan status ke PENDING
+            // Asumsi backend menggunakan string "PENDING" untuk mereset status
+            await gymService.verifyGymStatus(id, "PENDING");
 
+            // 2. Jika sukses, ubah tampilan UI agar kembali menjadi PENDING
+            setGyms((prev) => prev.map(gym => gym.id === id ? { ...gym, status: "PENDING" } : gym));
+
+            // Opsional: Bisa tambahkan toast/notifikasi sukses di sini
+            console.log(`Status gym ${name} berhasil di-reset ke Pending.`);
+        } catch (error) {
+            console.error("Gagal mengedit status:", error);
+            alert("Gagal mengedit data. Silakan coba lagi.");
+        }
+    };
     const closeModal = () => setModalConfig({ ...modalConfig, isOpen: false });
 
     const filteredGyms = gyms.filter((gym) => {
